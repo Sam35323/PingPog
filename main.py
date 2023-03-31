@@ -89,3 +89,5 @@ while game:
     pygame.draw.circle(window, 'yellow', circle_rect.center, C_R)
     clock.tick(60)
     pygame.display.update()
+
+# hello
