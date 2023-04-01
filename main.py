@@ -31,6 +31,8 @@ platform_rect = pygame.rect.Rect(WIDE // 2 - P_WIDE // 2, HIGH - P_HIGH * 2, P_W
 circle_rect = pygame.rect.Rect(WIDE // 2, HIGH // 2, C_R, C_WIDE)
 game_over = False
 
+platform_run = 0  # 1 - двигаем влево, 2 - двигаем вправо
+
 while game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -48,9 +50,10 @@ while game:
         press = pygame.key.get_pressed()
         if press[pygame.K_a]:
             platform_rect.x -= P_SPEED
+            platform_run = 1
         if press[pygame.K_d]:
             platform_rect.x += P_SPEED
-
+            platform_run = 2
         if platform_rect.colliderect(circle_rect):
             score += 1
             if FIRST_COL:
@@ -61,7 +64,14 @@ while game:
                 else:
                     C_X_SP -= SPEED
                 FIRST_COL = False
-            C_Y_SP = -SPEED
+            # проверяем движется ли платформа, и в зависимосте от этого увеличиваем скорость (векторы)
+            if C_X_SP >= 0 and platform_run == 1 or C_X_SP <= 0 and platform_run == 2:
+                C_Y_SP = -SPEED + 2
+            elif C_X_SP >= 0 and platform_run == 2 or C_X_SP <= 0 and platform_run == 1:
+                C_Y_SP = -SPEED - 2
+            else:
+                C_Y_SP = -SPEED
+        platform_run = 0
 
         pygame.draw.rect(window, 'white', platform_rect)
     circle_rect.y += C_Y_SP
@@ -85,9 +95,6 @@ while game:
     else:
         window.blit(lore_surf, (WIDE // 2, HIGH * 0))
 
-
     pygame.draw.circle(window, 'yellow', circle_rect.center, C_R)
     clock.tick(60)
     pygame.display.update()
-
-# hello
